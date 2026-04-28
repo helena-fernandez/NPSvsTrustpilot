@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NPS vs Trustpilot · seQura · Abril 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --green-main: #00C2A3;
+    --green-app:  #21CFAC;
+    --green-light:#CBFFEE;
+    --green-deep: #008F7A;
+    --purple:     #8B5CF6;
+    --purple-l:   #C4B5FD;
+    --blue-l:     #7DD3FC;
+    --blue-ll:    #BAE6FD;
+    --white:      #FFFFFF;
+    --gray-50:    #FAFAFB;
+    --gray-100:   #F5F5F7;
+    --gray-200:   #DEDEDE;
+    --gray-400:   #8D8D8D;
+    --gray-700:   #4B4B4B;
+    --black:      #1C1C1C;
+    --red:        #EF4444;
+    --red-l:      #FEE2E2;
+    --orange:     #F59E0B;
+    --orange-l:   #FEF3C7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--gray-100); color: var(--black); -webkit-font-smoothing: antialiased; }
+
+  .layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--white);
+    border-right: 1px solid var(--gray-200);
+    padding: 24px 0;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 24px 28px; border-bottom: 1px solid var(--gray-100);
+  }
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--green-main), var(--green-app));
+    display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 16px;
+  }
+  .brand-name { font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+  .brand-name span { color: var(--green-main); }
+
+  .nav { padding: 18px 12px; }
+  .nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); padding: 14px 12px 8px; font-weight: 600; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 8px; cursor: pointer;
+    color: var(--gray-700); font-size: 14px; font-weight: 500;
+    transition: all .15s;
+  }
+  .nav-item:hover { background: var(--gray-100); color: var(--black); }
+  .nav-item.active {
+    background: linear-gradient(135deg, var(--green-main), var(--green-app));
+    color: white; box-shadow: 0 4px 12px rgba(0,194,163,0.3);
+  }
+  .nav-item .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-200); flex-shrink: 0; }
+  .nav-item.active .dot { background: white; }
+
+  /* Topbar */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-left h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
+  .topbar-left p { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .pill {
+    background: var(--gray-100); border-radius: 999px;
+    padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--gray-700);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .pill .live { width: 8px; height: 8px; border-radius: 50%; background: var(--green-main); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--purple-l));
+    display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 13px;
+  }
+
+  /* Main */
+  .main { padding: 28px 32px 48px; }
+
+  /* Hero row: big metrics + donut */
+  .hero { display: grid; grid-template-columns: 1.6fr 1fr; gap: 22px; margin-bottom: 22px; }
+  .card { background: var(--white); border-radius: 16px; padding: 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .card-title { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+  .card-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+  .hero-left { display: flex; flex-direction: column; }
+  .hero-tabs { display: flex; gap: 8px; margin-top: 14px; }
+  .tab {
+    padding: 6px 14px; font-size: 12px; font-weight: 600;
+    color: var(--gray-400); border-radius: 999px; cursor: pointer;
+  }
+  .tab.active { color: var(--green-deep); background: var(--green-light); position: relative; }
+  .hero-stat { display: flex; align-items: baseline; gap: 26px; margin-top: 18px; }
+  .stat-big { font-size: 38px; font-weight: 800; letter-spacing: -1.5px; }
+  .stat-big small { font-size: 14px; color: var(--gray-400); font-weight: 500; margin-left: 4px; }
+  .stat-mid { font-size: 26px; font-weight: 700; color: var(--gray-700); letter-spacing: -0.8px; }
+  .stat-label { font-size: 12px; color: var(--gray-400); font-weight: 500; margin-top: 2px; }
+  .chart-wrap { margin-top: 16px; height: 200px; position: relative; }
+
+  .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--gray-100); }
+  .kpi { display: flex; align-items: center; gap: 10px; }
+  .kpi-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .kpi-icon.g1 { background: linear-gradient(135deg, var(--green-main), var(--green-app)); }
+  .kpi-icon.g2 { background: linear-gradient(135deg, var(--purple), var(--purple-l)); }
+  .kpi-icon.g3 { background: linear-gradient(135deg, var(--blue-l), var(--blue-ll)); color: var(--black); }
+  .kpi-icon.g4 { background: linear-gradient(135deg, var(--orange), #FCD34D); }
+  .kpi-val { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .kpi-lbl { font-size: 11px; color: var(--gray-400); }
+
+  .donut-card { position: relative; }
+  .donut-wrap { position: relative; height: 200px; margin-top: 8px; }
+  .donut-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+  .donut-center .v { font-size: 30px; font-weight: 800; letter-spacing: -1px; }
+  .donut-center .l { font-size: 11px; color: var(--gray-400); font-weight: 500; }
+  .donut-legend { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .leg { text-align: center; padding: 10px 6px; border-radius: 10px; background: var(--gray-50); }
+  .leg .pct { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+  .leg .nm { font-size: 10px; color: var(--gray-400); margin-top: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .leg.prom .pct { color: var(--green-main); }
+  .leg.pas .pct { color: var(--orange); }
+  .leg.det .pct { color: var(--red); }
+
+  /* Gradient KPI big cards */
+  .gradient-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+  .grad-card {
+    border-radius: 16px; padding: 22px; color: white; min-height: 160px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  .grad-card::before {
+    content: ''; position: absolute; right: -40px; bottom: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .grad-card::after {
+    content: ''; position: absolute; right: -20px; top: -60px;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .gc-1 { background: linear-gradient(135deg, #00C2A3 0%, #21CFAC 60%, #5EEAD4 100%); }
+  .gc-2 { background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 60%, #C4B5FD 100%); }
+  .gc-3 { background: linear-gradient(135deg, #0EA5E9 0%, #38BDF8 60%, #7DD3FC 100%); }
+  .gc-4 { background: linear-gradient(135deg, #008F7A 0%, #00B894 50%, #14B8A6 100%); }
+  .gc-label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; position: relative; z-index: 1; }
+  .gc-value { font-size: 36px; font-weight: 800; letter-spacing: -1.4px; line-height: 1; margin-top: 6px; position: relative; z-index: 1; }
+  .gc-sub { font-size: 12px; opacity: 0.85; position: relative; z-index: 1; }
+  .gc-spark { height: 38px; margin-top: 10px; position: relative; z-index: 1; }
+  .gc-spark svg { width: 100%; height: 100%; display: block; }
+
+  /* Comparison row */
+  .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 22px; }
+  .cmp { padding: 0; overflow: hidden; }
+  .cmp-head {
+    padding: 20px 22px; color: white;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cmp-head h3 { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+  .cmp-head .badge {
+    background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+  }
+  .cmp-nps .cmp-head { background: linear-gradient(135deg, #00C2A3, #008F7A); }
+  .cmp-tp .cmp-head  { background: linear-gradient(135deg, #EF4444, #B91C1C); }
+  .cmp-body { padding: 18px 22px 22px; }
+  .cmp-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .cmp-row:last-child { border-bottom: 0; }
+  .cmp-row .nm { font-size: 13px; font-weight: 600; }
+  .cmp-row .nm small { display: block; color: var(--gray-400); font-weight: 500; font-size: 11px; margin-top: 2px; }
+  .cmp-row .sc { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; }
+  .cmp-nps .cmp-row .sc { color: var(--green-deep); }
+  .cmp-tp .cmp-row .sc  { color: var(--red); }
+  .cmp-row.total { background: var(--gray-50); margin: 8px -22px -22px; padding: 16px 22px; border-top: 2px solid var(--gray-100); border-bottom: 0;}
+  .cmp-row.total .nm { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); }
+
+  /* Tables row */
+  .tables-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 22px; }
+  .tbl-card { padding: 0; overflow: hidden; }
+  .tbl-head {
+    padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .tbl-head h3 { font-size: 14px; font-weight: 700; letter-spacing: -0.2px; }
+  .tbl-head p { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+  .tbl-tag {
+    padding: 5px 10px; font-size: 11px; font-weight: 700; border-radius: 6px;
+    background: var(--red-l); color: var(--red);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--black); color: white; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.7px; padding: 11px 16px; text-align: left;
+  }
+  thead th:not(:first-child) { text-align: center; }
+  tbody td { padding: 13px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-100); }
+  tbody td:not(:first-child) { text-align: center; font-weight: 600; }
+  tbody tr:last-child td { border-bottom: 0; }
+  .badge-pct {
+    display: inline-block; min-width: 50px;
+    padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700;
+  }
+  .badge-pct.high { background: var(--red-l); color: var(--red); }
+  .badge-pct.mid  { background: var(--orange-l); color: var(--orange); }
+
+  /* Opportunity */
+  .opp-row { display: grid; grid-template-columns: 1fr; gap: 22px; margin-bottom: 22px; }
+  .opp-card { padding: 24px 26px; background: linear-gradient(135deg, var(--black) 0%, #2D2D2D 100%); color: white; border-radius: 16px; }
+  .opp-title { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+  .opp-sub { font-size: 12px; opacity: 0.65; margin-top: 2px; }
+  .opp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 18px; }
+  .opp-scen {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 18px;
+  }
+  .opp-scen.now { border-left: 3px solid var(--red); }
+  .opp-scen.mid { border-left: 3px solid var(--orange); }
+  .opp-scen.best { border-left: 3px solid var(--green-main); }
+  .opp-scen .nm { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; opacity: 0.7; font-weight: 600; }
+  .opp-scen .num { font-size: 34px; font-weight: 800; letter-spacing: -1.2px; margin-top: 6px; }
+  .opp-scen .num small { font-size: 14px; opacity: 0.7; font-weight: 600; }
+  .opp-scen .det { font-size: 12px; opacity: 0.75; margin-top: 6px; }
+
+  /* Conclusions / Next steps */
+  .final-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .conc-card { padding: 24px 26px; }
+  .conc-card h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gray-400); margin-bottom: 18px; }
+  .conc-list { display: flex; flex-direction: column; gap: 14px; }
+  .conc-item { display: flex; gap: 14px; }
+  .conc-item .num {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--green-light); color: var(--green-deep);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .conc-item .body { flex: 1; }
+  .conc-item .body strong { font-size: 14px; display: block; margin-bottom: 3px; }
+  .conc-item .body p { font-size: 12.5px; color: var(--gray-700); line-height: 1.55; }
+  .next .conc-item .num { background: var(--purple-l); color: #5B21B6; }
+
+  /* Footer */
+  footer { text-align: center; padding: 28px; font-size: 11px; color: var(--gray-400); }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .hero, .compare-row, .tables-row, .final-row { grid-template-columns: 1fr; }
+    .gradient-row { grid-template-columns: repeat(2, 1fr); }
+    .opp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">s</div>
+      <div class="brand-name">se<span>Qura</span></div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Análisis</div>
+      <div class="nav-item active"><span class="dot"></span>Resumen general</div>
+      <div class="nav-item"><span class="dot"></span>Volumen NPS vs TP</div>
+      <div class="nav-item"><span class="dot"></span>Puntuación</div>
+      <div class="nav-item"><span class="dot"></span>Distribución NPS</div>
+      <div class="nav-section">Acción</div>
+      <div class="nav-item"><span class="dot"></span>Tiendas en riesgo</div>
+      <div class="nav-item"><span class="dot"></span>Oportunidad</div>
+      <div class="nav-item"><span class="dot"></span>Conclusiones</div>
+      <div class="nav-item"><span class="dot"></span>Next steps</div>
+    </nav>
+  </aside>
+
+  <!-- ============== MAIN ============== -->
+  <div>
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>NPS vs Trustpilot · Reviews Dashboard</h1>
+        <p>¿En qué plataforma nos están valorando los usuarios y por qué?</p>
+      </div>
+      <div class="topbar-right">
+        <div class="pill"><span class="live"></span>Datos actualizados · Abril 2026</div>
+        <div class="avatar">SQ</div>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- ===== HERO ROW ===== -->
+      <section class="hero">
+        <!-- LEFT: stats + line chart -->
+        <div class="card hero-left">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="card-title">Volumen mensual de valoraciones</div>
+              <div class="card-sub">Evolución diaria · Abril 2026</div>
+            </div>
+            <div class="hero-tabs">
+              <span class="tab">Diario</span>
+              <span class="tab active">Mensual</span>
+              <span class="tab">Trimestral</span>
+            </div>
+          </div>
+
+          <div class="hero-stat">
+            <div>
+              <div class="stat-big">3.575<small>NPS</small></div>
+              <div class="stat-label">Total valoraciones recibidas</div>
+            </div>
+            <div>
+              <div class="stat-mid">56 <small style="font-size:12px; color:var(--red); font-weight:600;">Trustpilot</small></div>
+              <div class="stat-label">Reviews públicas</div>
+            </div>
+          </div>
+
+          <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
+
+          <div class="kpi-strip">
+            <div class="kpi"><div class="kpi-icon g1">N</div><div><div class="kpi-val">+85,1</div><div class="kpi-lbl">NPS Fraccionado</div></div></div>
+            <div class="kpi"><div class="kpi-icon g2">N</div><div><div class="kpi-val">+70,8</div><div class="kpi-lbl">NPS Invoice</div></div></div>
+            <div class="kpi"><div class="kpi-icon g3">★</div><div><div class="kpi-val">3,5/5</div><div class="kpi-lbl">Trustpilot media</div></div></div>
+            <div class="kpi"><div class="kpi-icon g4">!</div><div><div class="kpi-val">64×</div><div class="kpi-lbl">Brecha vol. NPS/TP</div></div></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Donut -->
+        <div class="card donut-card">
+          <div class="card-title">Distribución NPS</div>
+          <div class="card-sub">Sobre 3.575 respuestas en abril</div>
+          <div class="donut-wrap">
+            <canvas id="donutChart"></canvas>
+            <div class="donut-center">
+              <div class="v">89%</div>
+              <div class="l">Promotores</div>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="leg prom"><div class="pct">89,1%</div><div class="nm">Promotores</div></div>
+            <div class="leg pas"><div class="pct">5,8%</div><div class="nm">Pasivos</div></div>
+            <div class="leg det"><div class="pct">5,1%</div><div class="nm">Detractores</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== GRADIENT KPI CARDS ===== -->
+      <section class="gradient-row">
+        <div class="grad-card gc-1">
+          <div class="gc-label">Volumen</div>
+          <div>
+            <div class="gc-value">3.575</div>
+            <div class="gc-sub">Valoraciones NPS · 64× más que Trustpilot</div>
+          </div>
+          <div class="gc-spark"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline fill="rgba(255,255,255,0.18)" stroke="white" stroke-width="1.4" points="0,18 12,15 24,16 36,12 48,14 60,9 72,11 84,7 100,5 100,30 0,30"/></svg></div>
+        </div>
+        <div class="grad-card gc-2">
+          <div class="gc-label">Puntuación NPS</div>
+          <div>
+            <div class="gc-value">≈ 4,5<span style="font-size:18px; opacity:0.8;">/5</span></div>
+            <div class="gc-sub">Equivalente sobre 5 · Trustpilot está en 3,5/5</div>
+          </div>
+          <div class="gc-spark"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline fill="rgba(255,255,255,0.18)" stroke="white" stroke-width="1.4" points="0,8 12,9 24,8 36,10 48,7 60,8 72,7 84,9 100,8 100,30 0,30"/></svg></div>
+        </div>
+        <div class="grad-card gc-3">
+          <div class="gc-label">Promotores</div>
+          <div>
+            <div class="gc-value">3.185</div>
+            <div class="gc-sub">Usuarios con NPS 9-10 sin activar en Trustpilot</div>
+          </div>
+          <div class="gc-spark"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline fill="rgba(255,255,255,0.18)" stroke="white" stroke-width="1.4" points="0,22 12,18 24,20 36,15 48,16 60,11 72,13 84,8 100,6 100,30 0,30"/></svg></div>
+        </div>
+        <div class="grad-card gc-4">
+          <div class="gc-label">Oportunidad</div>
+          <div>
+            <div class="gc-value">×6</div>
+            <div class="gc-sub">Reviews en Trustpilot si activamos un 10% de promotores</div>
+          </div>
+          <div class="gc-spark"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline fill="rgba(255,255,255,0.18)" stroke="white" stroke-width="1.4" points="0,26 12,24 24,22 36,18 48,15 60,11 72,8 84,5 100,2 100,30 0,30"/></svg></div>
+        </div>
+      </section>
+
+      <!-- ===== COMPARISON: NPS vs TP ===== -->
+      <section class="compare-row">
+        <div class="card cmp cmp-nps">
+          <div class="cmp-head">
+            <h3>NPS · ¿Qué nota nos pones?</h3>
+            <span class="badge">Email post-pago a TODOS</span>
+          </div>
+          <div class="cmp-body">
+            <div class="cmp-row">
+              <div class="nm">Invoice<small>264 valoraciones · escala 0-10</small></div>
+              <div class="sc">8,75</div>
+            </div>
+            <div class="cmp-row">
+              <div class="nm">Pago Fraccionado<small>3.311 valoraciones · escala 0-10</small></div>
+              <div class="sc">9,38</div>
+            </div>
+            <div class="cmp-row total">
+              <div class="nm">Equivalente sobre 5</div>
+              <div class="sc">≈ 4,5/5</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card cmp cmp-tp">
+          <div class="cmp-head">
+            <h3>Trustpilot · Reviews públicas</h3>
+            <span class="badge">Pocos emails + redirección CC</span>
+          </div>
+          <div class="cmp-body">
+            <div class="cmp-row">
+              <div class="nm">Invoice<small>2 reviews · escala 1-5</small></div>
+              <div class="sc">1,0</div>
+            </div>
+            <div class="cmp-row">
+              <div class="nm">Pago Fraccionado<small>17 reviews · escala 1-5</small></div>
+              <div class="sc">2,6</div>
+            </div>
+            <div class="cmp-row total">
+              <div class="nm">Media ponderada (56 reviews)</div>
+              <div class="sc">3,5/5</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TABLES: TIENDAS DETRACTORES ===== -->
+      <section class="tables-row">
+        <div class="card tbl-card">
+          <div class="tbl-head">
+            <div>
+              <h3>Invoice · Tiendas con más detractores</h3>
+              <p>NO debemos pedir review en Trustpilot a estos clientes</p>
+            </div>
+            <span class="tbl-tag">⚠ Riesgo</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Tienda</th><th>Detractores</th><th>Total NPS</th><th>%</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Sklum</td><td>7</td><td>42</td><td><span class="badge-pct high">17%</span></td></tr>
+              <tr><td>Chris Botti</td><td>3</td><td>7</td><td><span class="badge-pct high">43%</span></td></tr>
+              <tr><td>Boutique motos</td><td>1</td><td>4</td><td><span class="badge-pct mid">25%</span></td></tr>
+              <tr><td>Outlet Moto</td><td>1</td><td>5</td><td><span class="badge-pct mid">20%</span></td></tr>
+              <tr><td>MiroyTengo</td><td>1</td><td>2</td><td><span class="badge-pct high">50%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card tbl-card">
+          <div class="tbl-head">
+            <div>
+              <h3>Pago Fraccionado · Tiendas con más detractores</h3>
+              <p>Excluir de campañas de captación de reviews</p>
+            </div>
+            <span class="tbl-tag">⚠ Riesgo</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Tienda</th><th>Detractores</th><th>Total NPS</th><th>%</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Hotmart</td><td>20</td><td>125</td><td><span class="badge-pct high">16%</span></td></tr>
+              <tr><td>Tradeando</td><td>10</td><td>21</td><td><span class="badge-pct high">48%</span></td></tr>
+              <tr><td>Albali Centros Form.</td><td>3</td><td>13</td><td><span class="badge-pct high">23%</span></td></tr>
+              <tr><td>Form. Universitaria</td><td>3</td><td>12</td><td><span class="badge-pct high">25%</span></td></tr>
+              <tr><td>Fund Grube</td><td>3</td><td>20</td><td><span class="badge-pct mid">15%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== OPPORTUNITY ===== -->
+      <section class="opp-row">
+        <div class="opp-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="opp-title">La oportunidad: 3.185 promotores sin activar</div>
+              <div class="opp-sub">Usuarios con NPS de 9 ó 10 que NO han recibido petición de review en Trustpilot</div>
+            </div>
+            <div style="font-size:11px; padding:6px 12px; background:rgba(0,194,163,0.15); color:var(--green-app); border-radius:999px; font-weight:600; letter-spacing:0.5px;">SIMULACIÓN MENSUAL</div>
+          </div>
+          <div class="opp-grid">
+            <div class="opp-scen now">
+              <div class="nm">Escenario actual</div>
+              <div class="num">56 <small>reviews</small></div>
+              <div class="det">Sin activar promotores NPS · media 3,5/5 sesgada</div>
+            </div>
+            <div class="opp-scen mid">
+              <div class="nm">Activamos un 5%</div>
+              <div class="num">≈ 215 <small>reviews · ×4</small></div>
+              <div class="det">+159 nuevas reviews positivas, esperables 4,5+/5</div>
+            </div>
+            <div class="opp-scen best">
+              <div class="nm">Activamos un 10%</div>
+              <div class="num">≈ 375 <small>reviews · ×7</small></div>
+              <div class="det">+318 nuevas reviews positivas. Media TP sube fuerte</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CONCLUSIONS / NEXT STEPS ===== -->
+      <section class="final-row">
+        <div class="card conc-card">
+          <h3>📌 Conclusiones</h3>
+          <div class="conc-list">
+            <div class="conc-item">
+              <div class="num">1</div>
+              <div class="body"><strong>El NPS funciona</strong><p>Tenemos volumen alto (3.575) y notas excelentes (≈ 9/10). La experiencia real de usuario es buena.</p></div>
+            </div>
+            <div class="conc-item">
+              <div class="num">2</div>
+              <div class="body"><strong>Trustpilot está infrautilizado y sesgado</strong><p>Sólo 56 reviews y media 3,5/5 que no refleja la satisfacción real. La imagen pública está distorsionada.</p></div>
+            </div>
+            <div class="conc-item">
+              <div class="num">3</div>
+              <div class="body"><strong>El problema es de captación, no de producto</strong><p>Hoy se pide review en Trustpilot básicamente cuando alguien escribe a CC. Los promotores no llegan a Trustpilot.</p></div>
+            </div>
+            <div class="conc-item">
+              <div class="num">4</div>
+              <div class="body"><strong>Los pain points son repetitivos y trabajables</strong><p>Atención al cliente, recargos poco transparentes y reembolsos lentos. Acciones de producto y CX abordables.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card conc-card next">
+          <h3>🚀 Next steps</h3>
+          <div class="conc-list">
+            <div class="conc-item">
+              <div class="num">1</div>
+              <div class="body"><strong>Sustituir el email NPS por la petición de review en Trustpilot</strong><p>En lugar de mandar un email para que valoren internamente con el NPS, redirigir a los usuarios para que lo hagan en Trustpilot públicamente. Trasladamos el volumen del NPS (3.575/mes) a reviews públicas reales.</p></div>
+            </div>
+            <div class="conc-item">
+              <div class="num">2</div>
+              <div class="body"><strong>Excluir tiendas con detractores recurrentes</strong><p>Lista negra dinámica: Hotmart, Tradeando, Sklum, Chris Botti, Albali, Formación Universitaria. Revisión mensual.</p></div>
+            </div>
+            <div class="conc-item">
+              <div class="num">3</div>
+              <div class="body"><strong>Plan en marcha: pain points + automatización</strong><p>Se está trabajando para eliminar los pain points actuales (atención al cliente, recargos, reembolsos) a la vez de automatizar las respuestas para todas las valoraciones recibidas.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>seQura · Análisis NPS vs Trustpilot · Abril 2026</footer>
+
+    </main>
+  </div>
+</div>
+
+<script>
+// Data
+const days = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28];
+const fraccVol  = [146,145,111,104,132,138,136,145,128,145,102,120,139,128,108,114,106,64,96,76,104,97,107,128,118,112,120,142];
+const invoiceVol= [11,9,5,5,8,12,15,10,11,12,4,2,10,12,18,8,8,6,2,13,13,16,16,4,14,6,9,5];
+// Approximate daily Trustpilot — distribute 56 ~ across days (~2 per day)
+const tpVol = days.map((_, i) => Math.max(0, Math.round(2 + Math.sin(i/3)*1.4 + (i%5===0?1:0))));
+
+// LINE CHART
+const lineCtx = document.getElementById('lineChart').getContext('2d');
+const grad1 = lineCtx.createLinearGradient(0, 0, 0, 200);
+grad1.addColorStop(0, 'rgba(0,194,163,0.30)'); grad1.addColorStop(1, 'rgba(0,194,163,0)');
+const grad2 = lineCtx.createLinearGradient(0, 0, 0, 200);
+grad2.addColorStop(0, 'rgba(139,92,246,0.30)'); grad2.addColorStop(1, 'rgba(139,92,246,0)');
+const grad3 = lineCtx.createLinearGradient(0, 0, 0, 200);
+grad3.addColorStop(0, 'rgba(239,68,68,0.30)'); grad3.addColorStop(1, 'rgba(239,68,68,0)');
+
+new Chart(lineCtx, {
+  type: 'line',
+  data: {
+    labels: days.map(d => d + ' Abr'),
+    datasets: [
+      { label: 'NPS Fraccionado', data: fraccVol, borderColor: '#00C2A3', backgroundColor: grad1, borderWidth: 2.5, tension: 0.4, fill: true, pointRadius: 0, pointHoverRadius: 5, pointBackgroundColor: '#00C2A3' },
+      { label: 'NPS Invoice',     data: invoiceVol, borderColor: '#8B5CF6', backgroundColor: grad2, borderWidth: 2.5, tension: 0.4, fill: true, pointRadius: 0, pointHoverRadius: 5, pointBackgroundColor: '#8B5CF6' },
+      { label: 'Trustpilot (est.)', data: tpVol, borderColor: '#EF4444', backgroundColor: grad3, borderWidth: 2, borderDash: [4,4], tension: 0.4, fill: true, pointRadius: 0, pointHoverRadius: 5, pointBackgroundColor: '#EF4444' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', align: 'end', labels: { boxWidth: 10, boxHeight: 10, padding: 12, font: { size: 11, weight: '600', family: 'Inter' }, color: '#4B4B4B' } },
+      tooltip: { backgroundColor: '#1C1C1C', titleFont: { family: 'Inter', size: 12 }, bodyFont: { family: 'Inter', size: 12 }, padding: 10, cornerRadius: 8, boxPadding: 4 }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#8D8D8D', font: { size: 10, family: 'Inter' }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
+      y: { grid: { color: '#F5F5F7', drawBorder: false }, ticks: { color: '#8D8D8D', font: { size: 10, family: 'Inter' } }, beginAtZero: true }
+    }
+  }
+});
+
+// DONUT CHART
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Promotores (9-10)', 'Pasivos (7-8)', 'Detractores (0-6)'],
+    datasets: [{
+      data: [89.1, 5.8, 5.1],
+      backgroundColor: ['#00C2A3', '#F59E0B', '#EF4444'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '72%',
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: '#1C1C1C', padding: 10, cornerRadius: 8, callbacks: { label: c => ' ' + c.label + ': ' + c.parsed + '%' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
