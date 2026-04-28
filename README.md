@@ -1,6 +1,6 @@
 # NPS vs Trustpilot · Dashboard — seQura · Abril 2026
 
-🔗 **Dashboard online:** [helena-fernandez.github.io/NPSvsTrutpilot](https://helena-fernandez.github.io/NPSvsTrustpilot/)
+🔗 **Dashboard online:** [helena-fernandez.github.io/NPSvsTrustpilot](https://helena-fernandez.github.io/NPSvsTrustpilot/)
 
 Análisis comparativo entre las valoraciones internas (NPS) y las reviews públicas (Trustpilot) recibidas en abril de 2026, con el objetivo de entender qué plataforma está funcionando mejor para captar valoraciones y cómo aumentar las reviews positivas en Trustpilot.
 
