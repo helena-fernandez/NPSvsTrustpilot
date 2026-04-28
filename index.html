@@ -278,6 +278,20 @@
 
   footer { text-align: center; padding: 28px; font-size: 11px; color: var(--gray-400); }
 
+  /* ============== Click-to-section highlight pulse ============== */
+  @keyframes highlight-pulse {
+    0%   { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 0 rgba(0,194,163,0); }
+    15%  { box-shadow: 0 1px 3px rgba(0,0,0,0.04),
+                       0 0 0 6px rgba(0,194,163,0.35),
+                       0 10px 50px rgba(0,194,163,0.55); }
+    100% { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 0 rgba(0,194,163,0); }
+  }
+  .highlight-pulse {
+    animation: highlight-pulse 1.6s ease-out;
+    position: relative;
+    z-index: 5;
+  }
+
   @media (max-width: 1100px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { display: none; }
@@ -674,7 +688,27 @@ new Chart(donutCtx, {
 
   targets.forEach(t => observer.observe(t.el));
 
-  // Smooth scroll on click (already enabled via CSS scroll-behavior, but ensure consistent)
+  // Helper: pulse the target card(s). If the element is a row wrapper, highlight its child cards.
+  function pulseTarget(el) {
+    if (!el) return;
+    const isCard = el.classList.contains('card') || el.classList.contains('opp-card') || el.classList.contains('conc-card');
+    let targets;
+    if (isCard) {
+      targets = [el];
+    } else {
+      // Row wrapper: pulse all visual cards inside
+      const inner = el.querySelectorAll('.card, .opp-card');
+      targets = inner.length ? Array.from(inner) : [el];
+    }
+    targets.forEach(t => {
+      t.classList.remove('highlight-pulse');
+      void t.offsetWidth;            // force reflow so the animation restarts
+      t.classList.add('highlight-pulse');
+      setTimeout(() => t.classList.remove('highlight-pulse'), 1700);
+    });
+  }
+
+  // Smooth scroll on click + pulse the target
   navItems.forEach(n => {
     n.addEventListener('click', (e) => {
       e.preventDefault();
@@ -683,6 +717,8 @@ new Chart(donutCtx, {
         const offset = target.getBoundingClientRect().top + window.scrollY - 80;
         window.scrollTo({ top: offset, behavior: 'smooth' });
         setActive(n.dataset.target);
+        // Wait for scroll to (mostly) finish before pulsing, so the highlight is visible
+        setTimeout(() => pulseTarget(target), 450);
       }
     });
   });
