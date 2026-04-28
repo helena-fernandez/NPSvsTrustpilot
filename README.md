@@ -1,27 +1,8 @@
 # NPS vs Trustpilot · Dashboard — seQura · Abril 2026
 
+🔗 **Dashboard online:** [helena-fernandez.github.io/NPSvsTrutpilot](https://helena-fernandez.github.io/NPSvsTrutpilot/)
+
 Análisis comparativo entre las valoraciones internas (NPS) y las reviews públicas (Trustpilot) recibidas en abril de 2026, con el objetivo de entender qué plataforma está funcionando mejor para captar valoraciones y cómo aumentar las reviews positivas en Trustpilot.
-
-> Dashboard interactivo en una sola página HTML, sin dependencias de build. Se renderiza directamente en el navegador.
-
----
-
-## 🚀 Ver el dashboard
-
-Una vez subido a GitHub y activadas las GitHub Pages, estará disponible en:
-
-```
-https://<tu-usuario>.github.io/<nombre-del-repo>/
-```
-
-También se puede abrir el `index.html` localmente haciendo doble clic.
-
-### Activar GitHub Pages
-
-1. Sube los archivos al repositorio.
-2. Ve a **Settings → Pages**.
-3. En *Source*, selecciona **Deploy from a branch** → rama `main` (o `master`) → carpeta `/ (root)`.
-4. Guarda. En 1-2 minutos GitHub te dará la URL pública.
 
 ---
 
@@ -51,25 +32,6 @@ El dashboard está organizado en 6 bloques:
 6. **Oportunidad** — simulación del impacto de activar promotores.
 
 Cierra con **Conclusiones** y **Next Steps** accionables.
-
----
-
-## 🛠️ Stack
-
-- HTML + CSS (sin frameworks, sin build).
-- [Chart.js 4](https://www.chartjs.org/) cargado vía CDN para el gráfico de líneas y el donut.
-- Tipografía [Inter](https://fonts.google.com/specimen/Inter) vía Google Fonts.
-- Paleta de colores: verde teal seQura (`#00C2A3`, `#21CFAC`) + morado campaign (`#8B5CF6`) + acentos.
-
----
-
-## 📁 Archivos
-
-```
-.
-├── index.html     # Dashboard (todo el HTML, CSS y JS en un solo archivo)
-└── README.md
-```
 
 ---
 
